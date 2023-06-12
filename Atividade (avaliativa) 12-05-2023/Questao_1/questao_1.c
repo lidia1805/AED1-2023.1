@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Cubo.h"
+#include "questao_2.h"
 
 Cubo criar_cubo(float comprimento, float largura, float altura) {
     Cubo cubo;
