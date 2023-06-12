@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "questao_1.h"
+
 int main() {
     Cubo cubo = criar_cubo(3.5, 2.0, 4.8);
 
