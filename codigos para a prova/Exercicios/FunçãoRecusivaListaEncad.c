@@ -60,3 +60,5 @@ int main() {
 
     return 0;
 }
+
+// uma função recursiva para imprimir uma lista encadeada
