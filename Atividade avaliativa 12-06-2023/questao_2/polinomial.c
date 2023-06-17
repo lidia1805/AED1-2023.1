@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//Questão A
 Node* criar_no(int coeficiente, int expoente) {
     Node* novo_no = (Node*)malloc(sizeof(Node));
     novo_no->coeficiente = coeficiente;
@@ -34,6 +35,7 @@ Node* inserir_polinomio(int coeficiente, int expoente, Node* lista) {
     }
 }
 
+//Questao B
 Node* somar_polinomios(Node* P1, Node* P2) {
     Node* resultado = NULL;
     Node* p1_atual = P1;
@@ -69,6 +71,7 @@ Node* somar_polinomios(Node* P1, Node* P2) {
     return resultado;
 }
 
+//Questão C
 void imprimir_polinomio(Node* lista) {
     if (lista == NULL) {
         printf("0\n");
