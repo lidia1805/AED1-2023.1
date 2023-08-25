@@ -1,81 +1,121 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
+#include "arvore_binaria.h"
+#include "pilha.h"
 
-// Estrutura de um nó da árvore binária
-typedef struct Node {
-    char data;
-    struct Node* left;
-    struct Node* right;
-} Node;
-
-// Função para criar um novo nó da árvore
-Node* createNode(char data) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    newNode->data = data;
-    newNode->left = NULL;
-    newNode->right = NULL;
-    return newNode;
+ArvoreBinaria* criarArvoreBinaria() {
+    ArvoreBinaria* arvore = (ArvoreBinaria*)malloc(sizeof(ArvoreBinaria));
+    if (arvore) {
+        arvore->raiz = NULL;
+    }
+    return arvore;
 }
 
-// Função para inserir um nó na árvore binária
-void insert(Node** root, char data) {
-    if (*root == NULL) {
-        *root = createNode(data);
-    } else if ((*root)->left == NULL) {
-        insert(&((*root)->left), data);
-    } else if ((*root)->right == NULL) {
-        insert(&((*root)->right), data);
-    } else {
-        // Se ambos os filhos estiverem ocupados, insere no filho esquerdo recursivamente
-        insert(&((*root)->left), data);
+void destruirArvore(NoArvore* no) {
+    if (no) {
+        destruirArvore(no->esquerda);
+        destruirArvore(no->direita);
+        free(no);
     }
 }
 
-// Função para percorrer a árvore em ordem (infixa)
-void inorderTraversal(Node* root) {
-    if (root != NULL) {
-        inorderTraversal(root->left);
-        printf("%c ", root->data);
-        inorderTraversal(root->right);
+void destruirArvoreBinaria(ArvoreBinaria* arvore) {
+    if (arvore) {
+        destruirArvore(arvore->raiz);
+        free(arvore);
     }
 }
 
-// Função para percorrer a árvore em pós-ordem (posfixa)
-void postorderTraversal(Node* root) {
-    if (root != NULL) {
-        postorderTraversal(root->left);
-        postorderTraversal(root->right);
-        printf("%c ", root->data);
+NoArvore* criarNo(char dado) {
+    NoArvore* novoNo = (NoArvore*)malloc(sizeof(NoArvore));
+    if (novoNo) {
+        novoNo->dado = dado;
+        novoNo->esquerda = NULL;
+        novoNo->direita = NULL;
+    }
+    return novoNo;
+}
+
+void inserirElemento(ArvoreBinaria* arvore, char dado) {
+    if (!arvore->raiz) {
+        arvore->raiz = criarNo(dado);
+        return;
+    }
+
+    NoArvore* atual = arvore->raiz;
+    while (1) {
+        if (dado < atual->dado) {
+            if (atual->esquerda) {
+                atual = atual->esquerda;
+            } else {
+                atual->esquerda = criarNo(dado);
+                break;
+            }
+        } else if (dado > atual->dado) {
+            if (atual->direita) {
+                atual = atual->direita;
+            } else {
+                atual->direita = criarNo(dado);
+                break;
+            }
+        } 
     }
 }
 
-// Função para percorrer a árvore em pré-ordem (prefixa)
-void preorderTraversal(Node* root) {
-    if (root != NULL) {
-        printf("%c ", root->data);
-        preorderTraversal(root->left);
-        preorderTraversal(root->right);
+
+void imprimirInfixa(NoArvore* no) {
+    if (no) {
+        imprimirInfixa(no->esquerda);
+        printf("%c ", no->dado);
+        imprimirInfixa(no->direita);
     }
 }
 
-// Função para converter uma expressão infixa em uma árvore binária
-Node* infixToBinaryTree(char* expression) {
-    // Implementar a conversão usando uma pilha (opcional)
+void imprimirPosfixa(NoArvore* no) {
+    if (no) {
+        imprimirPosfixa(no->esquerda);
+        imprimirPosfixa(no->direita);
+        printf("%c ", no->dado);
+    }
 }
 
-// Função para calcular o valor da expressão aritmética representada por uma árvore
-int evaluateExpression(Node* root) {
-    // Implementar o cálculo usando uma pilha ou fila (opcional)
+void imprimirPrefixa(NoArvore* no) {
+    if (no) {
+        printf("%c ", no->dado);
+        imprimirPrefixa(no->esquerda);
+        imprimirPrefixa(no->direita);
+    }
 }
 
-// Função para liberar a memória alocada para a árvore
-void freeTree(Node* root) {
-    if (root != NULL) {
-        freeTree(root->left);
-        freeTree(root->right);
-        free(root);
+void avaliarExpressao(NoArvore* no, Pilha* pilha) {
+    if (no) {
+        if (isdigit(no->dado)) {
+            empilhar(pilha, no->dado);
+        } else {
+            avaliarExpressao(no->esquerda, pilha);
+            avaliarExpressao(no->direita, pilha);
+            int operando2 = desempilhar(pilha) - '0'; // Convertendo char para int
+            int operando1 = desempilhar(pilha) - '0';
+            int resultado;
+
+            switch (no->dado) {
+                case '+':
+                    resultado = operando1 + operando2;
+                    break;
+                case '-':
+                    resultado = operando1 - operando2;
+                    break;
+                case '*':
+                    resultado = operando1 * operando2;
+                    break;
+                case '/':
+                    resultado = operando1 / operando2;
+                    break;
+            }
+
+            char resultadoChar = resultado + '0'; // Convertendo int para char
+            empilhar(pilha, resultadoChar);
+        }
     }
 }
 
